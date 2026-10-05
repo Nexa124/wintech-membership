@@ -1,6 +1,3 @@
-const PAYSTACK_PUBLIC_KEY = 'pk_test_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
-const DEMO_MODE = PAYSTACK_PUBLIC_KEY.includes('xxxxxxxx');
-
 const PLAN_PRICES = {
   Starter: 3000,
   Plus: 5000,
@@ -8,13 +5,39 @@ const PLAN_PRICES = {
   Premium: 11000,
 };
 
+const BANK_DETAILS = {
+  accountName: 'WINTECH MEMBERSHIP',
+  accountNumber: '1234567890',
+  bankName: 'Your Bank Name',
+  bankCode: '000',
+};
+
 const planSelect = document.getElementById('plan');
 const signupForm = document.getElementById('signupForm');
 const successMessage = document.getElementById('successMessage');
 
-const getAmountInKobo = (planName) => (PLAN_PRICES[planName] || 0) * 100;
+function showBankTransferDetails(plan, amount, fullName, email) {
+  successMessage.innerHTML = `
+    <h3 style="margin-bottom: 12px; color: var(--brand);">Registration Confirmed!</h3>
+    <p style="margin-bottom: 14px; color: var(--text);">Hi ${fullName}, your ${plan} membership registration has been received.</p>
 
-function handlePayment() {
+    <div style="background: rgba(53,224,161,0.1); border: 1px solid rgba(53,224,161,0.22); border-radius: 12px; padding: 16px; margin-bottom: 14px;">
+      <p style="color: var(--muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px;">Bank Transfer Details</p>
+      <p style="color: var(--text); margin-bottom: 8px;"><strong>Account Name:</strong> ${BANK_DETAILS.accountName}</p>
+      <p style="color: var(--text); margin-bottom: 8px;"><strong>Account Number:</strong> <code style="background: rgba(0,0,0,0.2); padding: 4px 8px; border-radius: 6px;">${BANK_DETAILS.accountNumber}</code></p>
+      <p style="color: var(--text); margin-bottom: 8px;"><strong>Bank Name:</strong> ${BANK_DETAILS.bankName}</p>
+      <p style="color: var(--text); margin-bottom: 8px;"><strong>Bank Code:</strong> ${BANK_DETAILS.bankCode}</p>
+      <p style="color: var(--text);"><strong>Amount:</strong> ₦${amount.toLocaleString()}</p>
+    </div>
+
+    <p style="color: var(--muted); font-size: 0.9rem; margin-bottom: 10px;">Please transfer exactly ₦${amount.toLocaleString()} to the account above. Once we receive your payment, your ${plan} membership will be activated.</p>
+    <p style="color: var(--muted); font-size: 0.85rem;">A confirmation email has been sent to <strong>${email}</strong>.</p>
+  `;
+
+  successMessage.classList.add('show');
+}
+
+function handleSubmission() {
   const fullName = document.getElementById('fullName').value.trim();
   const email = document.getElementById('email').value.trim();
   const phone = document.getElementById('phone').value.trim();
@@ -26,61 +49,56 @@ function handlePayment() {
     return;
   }
 
-  if (DEMO_MODE) {
-    successMessage.textContent = 'Demo mode: replace the placeholder Paystack key in script.js to enable real payment checkout.';
-    successMessage.classList.add('show');
-    return;
-  }
-
-  const amount = getAmountInKobo(plan);
+  const amount = PLAN_PRICES[plan];
 
   if (!amount || amount <= 0) {
     alert('Please select a valid membership plan.');
     return;
   }
 
-  const handler = PaystackPop.setup({
-    key: PAYSTACK_PUBLIC_KEY,
-    email,
-    amount,
-    currency: 'NGN',
-    ref: `wintech_${Date.now()}_${Math.floor(Math.random() * 100000)}`,
-    firstname: fullName.split(' ')[0],
-    lastname: fullName.split(' ').slice(1).join(' ') || 'Member',
-    phone,
-    metadata: {
-      custom_fields: [
-        {
-          display_name: 'Full Name',
-          variable_name: 'full_name',
-          value: fullName,
-        },
-        {
-          display_name: 'Membership Plan',
-          variable_name: 'membership_plan',
-          value: plan,
-        },
-        {
-          display_name: 'Message',
-          variable_name: 'message',
-          value: message || 'No message provided',
-        },
-      ],
+  fetch('/api/register', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
     },
-    callback: function (response) {
-      successMessage.textContent = 'Payment completed successfully. Your registration has been received. We will contact you shortly.';
-      successMessage.classList.add('show');
-      console.log('Paystack success:', response);
-      localStorage.setItem('wintech_last_payment_ref', response.reference);
-      signupForm.reset();
-      planSelect.value = 'Pro';
-    },
-    onClose: function () {
-      console.log('Payment window closed by user.');
-    },
-  });
+    body: JSON.stringify({
+      fullName,
+      email,
+      phone,
+      plan,
+      amount,
+      message,
+      registrationDate: new Date().toISOString(),
+    }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.success) {
+        showBankTransferDetails(plan, amount, fullName, email);
+        fetch('/api/send-registration-email', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email,
+            fullName,
+            plan,
+            amount,
+            bankDetails: BANK_DETAILS,
+          }),
+        }).catch((error) => console.error('Email notification error:', error));
 
-  handler.openIframe();
+        signupForm.reset();
+        planSelect.value = 'Pro';
+      } else {
+        alert('Registration failed. Please try again.');
+      }
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+      alert('An error occurred. Please try again.');
+    });
 }
 
 document.querySelectorAll('.select-plan').forEach((button) => {
@@ -101,7 +119,7 @@ document.querySelectorAll('.select-plan').forEach((button) => {
 
 signupForm.addEventListener('submit', function (event) {
   event.preventDefault();
-  handlePayment();
+  handleSubmission();
 });
 
 const savedPlan = localStorage.getItem('wintech_selected_amount');

@@ -1,105 +1,345 @@
-const PAYSTACK_PUBLIC_KEY = 'pk_test_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WINTECH | Membership Platform</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <div class="container nav">
+        <div class="logo">WINTECH</div>
 
-const PLAN_PRICES = {
-  Starter: 3000,
-  Plus: 5000,
-  Pro: 7000,
-  Premium: 11000,
-};
+        <nav class="nav-links" aria-label="Main navigation">
+          <a href="#benefits">Benefits</a>
+          <a href="#plans">Membership</a>
+          <a href="#how">How It Works</a>
+          <a class="nav-cta" href="#signup">Join Now</a>
+        </nav>
+      </div>
+    </header>
 
-const planSelect = document.getElementById('plan');
-const signupForm = document.getElementById('signupForm');
-const successMessage = document.getElementById('successMessage');
+    <main>
+      <section class="hero">
+        <div class="container hero-shell">
+          <div>
+            <div class="eyebrow">WINTECH MEMBERSHIP PLATFORM</div>
 
-const getAmountInKobo = (planName) => (PLAN_PRICES[planName] || 0) * 100;
+            <h1>
+              Activate.<br />
+              <span class="highlight">Participate.</span><br />
+              Unlock your benefits.
+            </h1>
 
-function handlePayment() {
-  const fullName = document.getElementById('fullName').value.trim();
-  const email = document.getElementById('email').value.trim();
-  const phone = document.getElementById('phone').value.trim();
-  const plan = planSelect.value;
-  const message = document.getElementById('message').value.trim();
+            <p>
+              Join WINTECH and select the membership plan that matches your goals.
+              Gain access to benefits, opportunities, and support designed for your membership level.
+            </p>
 
-  if (!fullName || !email || !phone || !plan) {
-    alert('Please fill in your full name, email, phone number, and select a plan.');
-    return;
-  }
+            <div class="cta-row">
+              <a href="#plans" class="btn btn-primary">View Membership Plans</a>
+              <a href="#how" class="btn btn-secondary">How It Works</a>
+            </div>
 
-  const amount = getAmountInKobo(plan);
+            <div class="trust-row" aria-label="Membership platform highlights">
+              <div class="stat"><strong>4K+</strong> Members</div>
+              <div class="stat"><strong>24/7</strong> Support</div>
+              <div class="stat"><strong>98%</strong> Satisfaction</div>
+            </div>
+          </div>
 
-  if (!amount || amount <= 0) {
-    alert('Please select a valid membership plan.');
-    return;
-  }
+          <div class="hero-visual" aria-label="Membership preview dashboard">
+            <div class="dashboard">
+              <div class="dashboard-top">
+                <div class="dots">
+                  <span class="dot red"></span>
+                  <span class="dot yellow"></span>
+                  <span class="dot green"></span>
+                </div>
+                <div class="member-tag">Member Access</div>
+              </div>
 
-  const handler = PaystackPop.setup({
-    key: PAYSTACK_PUBLIC_KEY,
-    email,
-    amount,
-    currency: 'NGN',
-    ref: `wintech_${Date.now()}_${Math.floor(Math.random() * 100000)}`,
-    firstname: fullName.split(' ')[0],
-    lastname: fullName.split(' ').slice(1).join(' ') || 'Member',
-    phone,
-    metadata: {
-      custom_fields: [
-        {
-          display_name: 'Full Name',
-          variable_name: 'full_name',
-          value: fullName,
-        },
-        {
-          display_name: 'Membership Plan',
-          variable_name: 'membership_plan',
-          value: plan,
-        },
-        {
-          display_name: 'Message',
-          variable_name: 'message',
-          value: message || 'No message provided',
-        },
-      ],
-    },
-    callback: function (response) {
-      successMessage.classList.add('show');
-      console.log('Paystack success:', response);
-      localStorage.setItem('wintech_last_payment_ref', response.reference);
-      signupForm.reset();
-      planSelect.value = 'Pro';
-    },
-    onClose: function () {
-      console.log('Payment window closed by user.');
-    },
-  });
+              <div class="dashboard-body">
+                <div class="metric-grid">
+                  <div class="metric">
+                    <small>Active Plans</small>
+                    <strong>4</strong>
+                  </div>
+                  <div class="metric">
+                    <small>Benefits</small>
+                    <strong>12+</strong>
+                  </div>
+                </div>
 
-  handler.openIframe();
-}
+                <div class="chart">
+                  <div class="chart-label">Member Growth</div>
+                  <div class="bars" aria-hidden="true">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-document.querySelectorAll('.select-plan').forEach((button) => {
-  button.addEventListener('click', () => {
-    const selectedPlan = button.getAttribute('data-plan');
-    const selectedAmount = button.getAttribute('data-amount');
+      <section id="benefits">
+        <div class="container">
+          <div class="section-head">
+            <h2>Why members choose WINTECH</h2>
+            <p>
+              A simple way to stay connected, access verified benefits, and enjoy a more rewarding membership experience.
+            </p>
+          </div>
 
-    if (selectedPlan) {
-      planSelect.value = selectedPlan;
-      if (selectedAmount) {
-        localStorage.setItem('wintech_selected_amount', selectedAmount);
-      }
-    }
+          <div class="feature-grid">
+            <div class="feature-card">
+              <div class="feature-icon">✓</div>
+              <h3>Flexible Plans</h3>
+              <p>
+                Choose a plan that fits your current goals and grow your access as your needs evolve.
+              </p>
+            </div>
 
-    document.getElementById('signup').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  });
-});
+            <div class="feature-card">
+              <div class="feature-icon">⚡</div>
+              <h3>Fast Access</h3>
+              <p>
+                Register quickly, review your benefits, and begin engaging with your selected membership level without delays.
+              </p>
+            </div>
 
-signupForm.addEventListener('submit', function (event) {
-  event.preventDefault();
-  handlePayment();
-});
+            <div class="feature-card">
+              <div class="feature-icon">★</div>
+              <h3>Member Support</h3>
+              <p>
+                Access a smoother member experience with simple onboarding and responsive assistance throughout your journey.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
 
-const savedPlan = localStorage.getItem('wintech_selected_amount');
-if (savedPlan) {
-  const selectedPlanName = Object.keys(PLAN_PRICES).find((key) => PLAN_PRICES[key] === Number(savedPlan));
-  if (selectedPlanName) {
-    planSelect.value = selectedPlanName;
-  }
-}
+      <section id="plans">
+        <div class="container">
+          <div class="section-head">
+            <h2>Choose your membership</h2>
+            <p>Select the plan that best suits your needs and unlock the right benefit level.</p>
+          </div>
+
+          <div class="plans">
+            <div class="plan">
+              <h3>Starter</h3>
+              <div class="price">
+                <strong>₦3,000</strong>
+                <span>/ month</span>
+              </div>
+              <p>Perfect for members exploring the platform and getting started with essential benefits.</p>
+
+              <ul>
+                <li>Basic membership access</li>
+                <li>Member updates</li>
+                <li>Platform onboarding</li>
+              </ul>
+
+              <button class="btn btn-primary select-plan" data-plan="Starter" data-amount="3000">Select Plan</button>
+            </div>
+
+            <div class="plan">
+              <h3>Plus</h3>
+              <div class="price">
+                <strong>₦5,000</strong>
+                <span>/ month</span>
+              </div>
+              <p>Built for members who want a stronger access experience and added value.</p>
+
+              <ul>
+                <li>Everything in Starter</li>
+                <li>Priority support</li>
+                <li>More access perks</li>
+              </ul>
+
+              <button class="btn btn-primary select-plan" data-plan="Plus" data-amount="5000">Select Plan</button>
+            </div>
+
+            <div class="plan featured">
+              <div class="plan-badge">Most Popular</div>
+              <h3>Pro</h3>
+              <div class="price">
+                <strong>₦7,000</strong>
+                <span>/ month</span>
+              </div>
+              <p>Designed for members seeking broader access and a more rewarding benefit package.</p>
+
+              <ul>
+                <li>Everything in Plus</li>
+                <li>Enhanced benefits</li>
+                <li>Priority member access</li>
+              </ul>
+
+              <button class="btn btn-primary select-plan" data-plan="Pro" data-amount="7000">Select Plan</button>
+            </div>
+
+            <div class="plan">
+              <h3>Premium</h3>
+              <div class="price">
+                <strong>₦11,000</strong>
+                <span>/ month</span>
+              </div>
+              <p>Our highest tier for members seeking full access and premium support throughout the platform.</p>
+
+              <ul>
+                <li>All platform benefits</li>
+                <li>Premium support</li>
+                <li>Exclusive opportunities</li>
+              </ul>
+
+              <button class="btn btn-primary select-plan" data-plan="Premium" data-amount="11000">Select Plan</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="how">
+        <div class="container">
+          <div class="section-head">
+            <h2>How WINTECH works</h2>
+            <p>A quick and straightforward process to begin your membership journey.</p>
+          </div>
+
+          <div class="steps">
+            <div class="step">
+              <div class="step-number">1</div>
+              <h3>Choose a plan</h3>
+              <p>Select the membership level that fits your goals and preferred level of access.</p>
+            </div>
+
+            <div class="step">
+              <div class="step-number">2</div>
+              <h3>Register</h3>
+              <p>Create your account by filling in your details and choosing your preferred plan.</p>
+            </div>
+
+            <div class="step">
+              <div class="step-number">3</div>
+              <h3>Access your benefits</h3>
+              <p>Use the member dashboard to view the benefits available to your selected plan.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="signup-wrap" id="signup">
+        <div class="container">
+          <div class="signup-box">
+            <div class="signup-copy">
+              <h3>Start your WINTECH membership</h3>
+              <p>
+                Complete the form below to register your membership and receive bank transfer payment instructions.
+                Pay directly to the account shown after registration.
+              </p>
+
+              <div class="mini-points">
+                <div>Fast onboarding</div>
+                <div>Direct bank transfer</div>
+                <div>Access to your selected benefits</div>
+              </div>
+            </div>
+
+            <form id="signupForm">
+              <div class="field-group">
+                <div class="field">
+                  <label for="fullName">Full Name</label>
+                  <input id="fullName" type="text" placeholder="Enter your full name" required />
+                </div>
+
+                <div class="field">
+                  <label for="email">Email Address</label>
+                  <input id="email" type="email" placeholder="name@example.com" required />
+                </div>
+
+                <div class="field">
+                  <label for="phone">Phone Number</label>
+                  <input id="phone" type="tel" placeholder="+234 800 000 0000" required />
+                </div>
+
+                <div class="field">
+                  <label for="plan">Membership Plan</label>
+                  <select id="plan" required>
+                    <option value="">Select a plan</option>
+                    <option value="Starter">Starter — ₦3,000</option>
+                    <option value="Plus">Plus — ₦5,000</option>
+                    <option value="Pro" selected>Pro — ₦7,000</option>
+                    <option value="Premium">Premium — ₦11,000</option>
+                  </select>
+                </div>
+
+                <div class="field">
+                  <label for="message">Message (optional)</label>
+                  <textarea id="message" placeholder="Tell us a bit about what you are looking for..."></textarea>
+                </div>
+              </div>
+
+              <div class="submit-row">
+                <div class="form-note">Direct bank transfer • Secure registration</div>
+                <button type="submit" class="btn btn-primary">Get Bank Details</button>
+              </div>
+
+              <div id="successMessage" class="success" aria-live="polite"></div>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="container">
+          <div class="section-head">
+            <h2>Frequently asked questions</h2>
+          </div>
+
+          <div class="faq">
+            <details open>
+              <summary>What is WINTECH?</summary>
+              <div class="faq-answer">
+                WINTECH is a membership platform where members choose a plan and access the benefits associated with that plan.
+              </div>
+            </details>
+
+            <details>
+              <summary>How much does membership cost?</summary>
+              <div class="faq-answer">
+                Membership options currently include ₦3,000, ₦5,000, ₦7,000, and ₦11,000 depending on the plan selected.
+              </div>
+            </details>
+
+            <details>
+              <summary>How do I become a member?</summary>
+              <div class="faq-answer">
+                Choose a membership plan, complete the registration form, and follow the bank transfer instructions provided.
+              </div>
+            </details>
+
+            <details>
+              <summary>How do I pay?</summary>
+              <div class="faq-answer">
+                After completing your registration, you will receive the bank transfer details. Transfer the correct amount to the account shown and send your proof of payment.
+              </div>
+            </details>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      © 2026 WINTECH. All rights reserved.
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
