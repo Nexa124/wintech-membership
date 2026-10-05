@@ -32,9 +32,9 @@ const PLAN_PRICES = {
 
 const BANK_DETAILS = {
   accountName: 'Chisom Anderson Ezurike',
-  accountNumber: process.env.BANK_ACCOUNT_NUMBER || '1234567890',
-  bankName: process.env.BANK_NAME || 'Your Bank Name',
-  bankCode: process.env.BANK_CODE || '000',
+  accountNumber: process.env.BANK_ACCOUNT_NUMBER || '2016868423',
+  bankName: process.env.BANK_NAME || 'Kuda MFB',
+  bankCode: process.env.BANK_CODE || '50211',
 };
 
 const emailTransporter = nodemailer.createTransport({

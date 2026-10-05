@@ -7,9 +7,9 @@ const PLAN_PRICES = {
 
 const BANK_DETAILS = {
   accountName: 'Chisom Anderson Ezurike',
-  accountNumber: '1234567890',
-  bankName: 'Your Bank Name',
-  bankCode: '000',
+  accountNumber: '2016868423',
+  bankName: 'Kuda MFB',
+  bankCode: '50211',
 };
 
 const planSelect = document.getElementById('plan');
