@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: wintech-membership
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      - key: ADMIN_SECRET_KEY
+        value: demo-admin-key
+      - key: BANK_ACCOUNT_NUMBER
+        value: 2016868423
+      - key: BANK_NAME
+        value: Kuda MFB
+      - key: BANK_CODE
+        value: 50211
+      - key: SMTP_USER
+        value: your_email@gmail.com
+      - key: SMTP_PASS
+        value: your_app_password
+      - key: SMTP_FROM
+        value: noreply@wintech.com
